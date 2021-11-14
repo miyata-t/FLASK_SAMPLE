@@ -2,6 +2,8 @@ from flask import Flask
 from flask import redirect
 from flask_login import LoginManager, login_required, logout_user
 import os
+from flask_bootstrap import Bootstrap
+
 
 # views
 from views.login import login_app
@@ -19,6 +21,7 @@ app.register_blueprint(logout_app)
 app.register_blueprint(signup_app)
 app.register_blueprint(post_app)
 app.config['SECRET_KEY'] = os.urandom(24)
+bootstrap = Bootstrap(app)
 
 # DBの登録
 init_db(app)
