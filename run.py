@@ -5,6 +5,7 @@ import os
 
 # views
 from views.login import login_app
+from views.logout import logout_app
 from views.signup import signup_app
 from views.post import post_app
 
@@ -14,6 +15,7 @@ from models.user import User
 
 app = Flask(__name__)
 app.register_blueprint(login_app)
+app.register_blueprint(logout_app)
 app.register_blueprint(signup_app)
 app.register_blueprint(post_app)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -28,12 +30,6 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
-
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect('/login')
 
 if __name__ == '__main__':
     app.run()
