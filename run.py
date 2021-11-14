@@ -1,31 +1,28 @@
 from flask import Flask
-from flask import render_template, request, redirect, session
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user
-from datetime import datetime
-import pytz
+from flask import render_template, request, redirect
+from flask_login import LoginManager, login_required, logout_user
 import os
 
+# views
+from views.login import login_app
+from views.signup import signup_app
+
+# models
+from models.database_manager import init_db, db
+from models.user import User, db
+from models.post import Post, db
+
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.register_blueprint(login_app)
+app.register_blueprint(signup_app)
 app.config['SECRET_KEY'] = os.urandom(24)
-db = SQLAlchemy(app)
+
+# DBの登録
+init_db(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
-# テーブル定義
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(50), nullable=False)
-    body = db.Column(db.String(300), nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(pytz.timezone('Asia/Tokyo')))
-
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_name = db.Column(db.String(30), nullable=False, unique=True)
-    password = db.Column(db.String(12), nullable=False)
-    address = db.Column(db.String(30), nullable=True)
 
 # https://flask-login.readthedocs.io/en/latest/#flask_login.LoginManager.user_loader
 @login_manager.user_loader
@@ -39,40 +36,6 @@ def index():
         posts = Post.query.all()
 
         return render_template('index.html', posts=posts)
-
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'POST':
-        user_name = request.form.get('user_name')
-        password = request.form.get('password')
-        address = request.form.get('address')
-        
-        user = User(user_name=user_name, password=password, address=address)
-        
-        db.session.add(user)
-        db.session.commit()
-        return redirect('/login')
-    else:
-        return render_template('signup.html')
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        user_name = request.form.get('user_name')
-        password = request.form.get('password')
-        
-        user = User.query.filter_by(user_name=user_name).first()
-
-        if user.password == password:
-            login_user(user)
-            session["user_name"] = user.user_name
-            session["address"] = user.address
-            
-            return redirect('/')
-        
-        return redirect('/login')
-    else:
-        return render_template('login.html')
 
 @app.route('/logout')
 @login_required
