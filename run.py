@@ -1,6 +1,5 @@
 from flask import Flask
-from flask import redirect
-from flask_login import LoginManager, login_required, logout_user
+from flask_login import LoginManager
 import os
 from flask_bootstrap import Bootstrap
 
