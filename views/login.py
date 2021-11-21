@@ -23,7 +23,8 @@ def login():
           session["user_name"] = user.user_name
           session["address"] = user.address
 
-          return redirect('/')
+          next_page = request.args.get('next')
+          return  redirect(next_page) if next_page else redirect('/')
 
       return redirect('/login')
     else:
