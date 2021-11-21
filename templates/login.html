@@ -7,6 +7,11 @@
 {% block content %}
 <div class="container">
     <h1>ログイン</h1>
+    {% if msg %}
+      <div class="alert alert-warning">
+          {{ msg }}
+      </div>
+    {% endif %}
     <form method="POST">
         <label for="" class="form-label">ユーザー名</label>
         <input type="text" name="user_name" class="form-control">

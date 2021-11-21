@@ -1,5 +1,6 @@
 from flask import Blueprint
 from flask import render_template, request, redirect, session
+from flask.helpers import url_for
 from flask_login import login_user
 from models.user import User
 from views.login_manager import login_manager
@@ -19,7 +20,7 @@ def login():
       user = User.query.filter_by(user_name=user_name).first()
 
       if user is None:
-          return redirect('/login')
+          return redirect(url_for('login.login', msg='ユーザー名もしくはパスワードが誤っています。'))
 
       if user.password == password:
           login_user(user)
@@ -29,6 +30,9 @@ def login():
           next_page = request.args.get('next')
           return  redirect(next_page) if next_page else redirect('/')
 
-      return redirect('/login')
+      return redirect(url_for('login.login', msg='ユーザー名もしくはパスワードが誤っています。'))
     else:
-        return render_template('login.html')
+        req = request.args
+        msg = req.get("msg")
+        print(msg)
+        return render_template('login.html', msg=msg)
