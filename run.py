@@ -27,6 +27,7 @@ init_db(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'login.login'
 
 # https://flask-login.readthedocs.io/en/latest/#flask_login.LoginManager.user_loader
 @login_manager.user_loader
