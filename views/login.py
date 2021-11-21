@@ -18,6 +18,9 @@ def login():
 
       user = User.query.filter_by(user_name=user_name).first()
 
+      if user is None:
+          return redirect('/login')
+
       if user.password == password:
           login_user(user)
           session["user_name"] = user.user_name
