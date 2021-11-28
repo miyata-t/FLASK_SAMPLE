@@ -14,10 +14,13 @@
     {% endif %}
     <form method="POST">
         <label for="" class="form-label">ユーザー名</label>
-        <input type="text" name="user_name" class="form-control">
+        <input type="text" id="user_name" name="user_name" class="form-control">
         <label for="" class="form-label">パスワード</label>
-        <input type="password" name="password" class="form-control">
-        <input type="submit" value="ログイン" class="btn btn-primary">
+        <input type="password" id="password" name="password" class="form-control">
+        <input type="submit" id="login-btn" value="ログイン" class="btn btn-primary" disabled>
     </form>
 </div>
+
+<script src="static/js/login.js"></script>
+
 {% endblock %}
