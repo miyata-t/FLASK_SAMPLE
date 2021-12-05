@@ -1,7 +1,9 @@
 from flask import Flask
+from flask.templating import render_template
 from flask_login import LoginManager
 import os
 from flask_bootstrap import Bootstrap
+from werkzeug.exceptions import NotFound
 
 
 # views
@@ -21,6 +23,12 @@ app.register_blueprint(signup_app)
 app.register_blueprint(post_app)
 app.config['SECRET_KEY'] = os.urandom(24)
 bootstrap = Bootstrap(app)
+
+app.errorhandler(NotFound)
+def page_not_found(error):
+    return render_template('404.html')
+
+app.register_error_handler(NotFound, page_not_found)
 
 # DBの登録
 init_db(app)
