@@ -4,6 +4,7 @@ from flask.helpers import url_for
 from flask_login import login_user
 from models.user import User
 from views.login_manager import login_manager
+import re
 
 login_app = Blueprint("login", __name__)
 # https://flask-login.readthedocs.io/en/latest/#flask_login.LoginManager.user_loader
@@ -16,7 +17,10 @@ def login():
     if request.method == 'POST':
       user_name = request.form.get('user_name')
       password = request.form.get('password')
-
+      
+      if not  __is_request_enabled(user_name, password):
+        return redirect(url_for('login.login', msg='利用できる半角英数字のみです'))
+      
       user = User.query.filter_by(user_name=user_name).first()
 
       if user is None:
@@ -36,3 +40,13 @@ def login():
         msg = req.get("msg")
         print(msg)
         return render_template('login.html', msg=msg)
+
+def __is_request_enabled(user_name, password):
+    repatter = re.compile(r'^\w{1,20}$')
+    validation_user_name = repatter.match(user_name)
+    validation_password = repatter.match(password)
+    
+    if validation_user_name and validation_password:
+        return True
+    else:
+        return False
